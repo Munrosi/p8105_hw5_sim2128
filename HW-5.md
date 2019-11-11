@@ -280,3 +280,31 @@ ggplot(aes(x = weeks, y = observations, group = subject_id, color = arm)) + geom
 ```
 
 ![](HW-5_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+# Problem 3
+
+``` r
+set.seed(1)
+
+sim_regression = function(n = 30, beta0 = 2, beta1 = 0) {
+  
+  sim_data = tibble(
+    x = rnorm(n, mean = 0, sd = 1),
+    y = beta0 + beta1 * x + rnorm(n, 0, sqrt(50))
+  )
+  
+  ls_fit = lm(y ~ x, data = sim_data) %>%
+  broom::tidy()
+  
+ tibble(
+    beta1_hat = ls_fit[[2, 2]],
+    p_value = ls_fit[[2, 5]]
+  )
+}
+```
+
+``` r
+sim_results = 
+  rerun(10000, sim_regression()) %>% 
+  bind_rows()
+```
